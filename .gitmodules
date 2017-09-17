@@ -1,0 +1,6 @@
+[submodule "stm32f-lib"]
+	path = stm32f-lib
+	url = https://github.com/new-dna/stm32f-lib.git
+[submodule "synth-lib"]
+	path = synth-lib
+	url = https://github.com/new-dna/synth-lib.git
