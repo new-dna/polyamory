@@ -1,0 +1,442 @@
+20:13:03 **** Build of configuration Debug for project polyamory-stm32f412g-discovery ****
+make all 
+Building file: ../src/main.c
+Invoking: MCU GCC Compiler
+/Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -DSTM32 -DSTM32F4 -DSTM32F412ZGTx -DSTM32F412G_DISCO -DDEBUG -I"/Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc" -I"/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/CMSIS/Include" -I"/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/BSP/STM32412G-Discovery" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
+In file included from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:48:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:47,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:177,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:193:3: error: #error "Please select first the target STM32F4xx device used in your application (in stm32f4xx.h file)"
+  #error "Please select first the target STM32F4xx device used in your application (in stm32f4xx.h file)"
+   ^~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:51:0,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:177,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h:6729:45: error: unknown type name 'RCC_PeriphCLKInitTypeDef'
+ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit);
+                                             ^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h:6730:35: error: unknown type name 'RCC_PeriphCLKInitTypeDef'
+ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit);
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:181:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h:243:21: error: unknown type name 'GPIO_TypeDef'
+ void  HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init);
+                     ^~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h:244:23: error: unknown type name 'GPIO_TypeDef'
+ void  HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin);
+                       ^~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h:253:32: error: unknown type name 'GPIO_TypeDef'
+ GPIO_PinState HAL_GPIO_ReadPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
+                                ^~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h:254:24: error: unknown type name 'GPIO_TypeDef'
+ void HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState);
+                        ^~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h:255:25: error: unknown type name 'GPIO_TypeDef'
+ void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
+                         ^~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h:256:36: error: unknown type name 'GPIO_TypeDef'
+ HAL_StatusTypeDef HAL_GPIO_LockPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
+                                    ^~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:185:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h:159:3: error: unknown type name 'DMA_Stream_TypeDef'
+   DMA_Stream_TypeDef         *Instance;                                                        /*!< Register base address                  */
+   ^~~~~~~~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:185:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h:165:3: error: unknown type name '__IO'
+   __IO HAL_DMA_StateTypeDef  State;                                                            /*!< DMA transfer state                     */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h:165:30: error: expected ':', ',', ';', '}' or '__attribute__' before 'State'
+   __IO HAL_DMA_StateTypeDef  State;                                                            /*!< DMA transfer state                     */
+                              ^~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:189:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:281:27: error: unknown type name 'IRQn_Type'
+ void HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority);
+                           ^~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:282:25: error: unknown type name 'IRQn_Type'
+ void HAL_NVIC_EnableIRQ(IRQn_Type IRQn);
+                         ^~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:283:26: error: unknown type name 'IRQn_Type'
+ void HAL_NVIC_DisableIRQ(IRQn_Type IRQn);
+                          ^~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:295:27: error: unknown type name 'IRQn_Type'
+ void HAL_NVIC_GetPriority(IRQn_Type IRQn, uint32_t PriorityGroup, uint32_t* pPreemptPriority, uint32_t* pSubPriority);
+                           ^~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:296:33: error: unknown type name 'IRQn_Type'
+ uint32_t HAL_NVIC_GetPendingIRQ(IRQn_Type IRQn);
+                                 ^~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:297:29: error: unknown type name 'IRQn_Type'
+ void HAL_NVIC_SetPendingIRQ(IRQn_Type IRQn);
+                             ^~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:298:31: error: unknown type name 'IRQn_Type'
+ void HAL_NVIC_ClearPendingIRQ(IRQn_Type IRQn);
+                               ^~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:299:29: error: unknown type name 'IRQn_Type'
+ uint32_t HAL_NVIC_GetActive(IRQn_Type IRQn);
+                             ^~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:193:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h:210:3: error: unknown type name 'ADC_TypeDef'
+   ADC_TypeDef                   *Instance;                   /*!< Register base address */
+   ^~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h:214:3: error: unknown type name '__IO'
+   __IO uint32_t                 NbrOfCurrentConversionRank;  /*!< ADC number of current conversion rank */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h:214:33: error: expected ':', ',', ';', '}' or '__attribute__' before 'NbrOfCurrentConversionRank'
+   __IO uint32_t                 NbrOfCurrentConversionRank;  /*!< ADC number of current conversion rank */
+                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:201:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_crc.h:84:3: error: unknown type name 'CRC_TypeDef'
+   CRC_TypeDef                 *Instance;  /*!< Register base address   */
+   ^~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_crc.h:88:3: error: unknown type name '__IO'
+   __IO HAL_CRC_StateTypeDef   State;      /*!< CRC communication state */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_crc.h:88:31: error: expected ':', ',', ';', '}' or '__attribute__' before 'State'
+   __IO HAL_CRC_StateTypeDef   State;      /*!< CRC communication state */
+                               ^~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:222:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:78:3: error: unknown type name '__IO'
+   __IO FLASH_ProcedureTypeDef ProcedureOnGoing;   /*Internal variable to indicate which procedure is ongoing or not in IT context*/
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:78:31: error: expected ':', ',', ';', '}' or '__attribute__' before 'ProcedureOnGoing'
+   __IO FLASH_ProcedureTypeDef ProcedureOnGoing;   /*Internal variable to indicate which procedure is ongoing or not in IT context*/
+                               ^~~~~~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:250:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h:168:3: error: unknown type name 'I2C_TypeDef'
+   I2C_TypeDef                *Instance;      /*!< I2C registers base address               */
+   ^~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h:176:3: error: unknown type name '__IO'
+   __IO uint16_t              XferCount;      /*!< I2C transfer counter                     */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h:176:30: error: expected ':', ',', ';', '}' or '__attribute__' before 'XferCount'
+   __IO uint16_t              XferCount;      /*!< I2C transfer counter                     */
+                              ^~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:254:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2s.h:114:3: error: unknown type name 'SPI_TypeDef'
+   SPI_TypeDef                *Instance;    /*!< I2S registers base address        */
+   ^~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2s.h:120:3: error: unknown type name '__IO'
+   __IO uint16_t              TxXferSize;   /*!< I2S Tx transfer size              */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2s.h:120:30: error: expected ':', ',', ';', '}' or '__attribute__' before 'TxXferSize'
+   __IO uint16_t              TxXferSize;   /*!< I2S Tx transfer size              */
+                              ^~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:262:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_iwdg.h:80:3: error: unknown type name 'IWDG_TypeDef'
+   IWDG_TypeDef                 *Instance;  /*!< Register base address    */
+   ^~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:278:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc.h:182:3: error: unknown type name 'RTC_TypeDef'
+   RTC_TypeDef                 *Instance;  /*!< Register base address    */
+   ^~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc.h:188:3: error: unknown type name '__IO'
+   __IO HAL_RTCStateTypeDef    State;      /*!< Time communication state */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc.h:188:31: error: expected ':', ',', ';', '}' or '__attribute__' before 'State'
+   __IO HAL_RTCStateTypeDef    State;      /*!< Time communication state */
+                               ^~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:290:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h:124:3: error: unknown type name 'SPI_TypeDef'
+   SPI_TypeDef                *Instance;    /* SPI registers base address */
+   ^~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h:132:3: error: unknown type name '__IO'
+   __IO uint16_t              TxXferCount;  /* SPI Tx Transfer Counter */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h:132:30: error: expected ':', ',', ';', '}' or '__attribute__' before 'TxXferCount'
+   __IO uint16_t              TxXferCount;  /* SPI Tx Transfer Counter */
+                              ^~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:294:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:291:3: error: unknown type name 'TIM_TypeDef'
+   TIM_TypeDef                 *Instance;     /*!< Register base address             */
+   ^~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:297:3: error: unknown type name '__IO'
+   __IO HAL_TIM_StateTypeDef   State;         /*!< TIM operation state               */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:297:31: error: expected ':', ',', ';', '}' or '__attribute__' before 'State'
+   __IO HAL_TIM_StateTypeDef   State;         /*!< TIM operation state               */
+                               ^~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:294:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:1748:25: error: unknown type name 'TIM_TypeDef'
+ void TIM_Base_SetConfig(TIM_TypeDef *TIMx, TIM_Base_InitTypeDef *Structure);
+                         ^~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:1749:24: error: unknown type name 'TIM_TypeDef'
+ void TIM_TI1_SetConfig(TIM_TypeDef *TIMx, uint32_t TIM_ICPolarity, uint32_t TIM_ICSelection, uint32_t TIM_ICFilter);
+                        ^~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:1750:24: error: unknown type name 'TIM_TypeDef'
+ void TIM_OC2_SetConfig(TIM_TypeDef *TIMx, TIM_OC_InitTypeDef *OC_Config);
+                        ^~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:1754:24: error: unknown type name 'TIM_TypeDef'
+ void TIM_CCxChannelCmd(TIM_TypeDef* TIMx, uint32_t Channel, uint32_t ChannelState);  
+                        ^~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:298:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:162:3: error: unknown type name 'USART_TypeDef'
+   USART_TypeDef                 *Instance;        /*!< UART registers base address        */
+   ^~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:170:3: error: unknown type name '__IO'
+   __IO uint16_t                 TxXferCount;      /*!< UART Tx Transfer Counter           */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:170:33: error: expected ':', ',', ';', '}' or '__attribute__' before 'TxXferCount'
+   __IO uint16_t                 TxXferCount;      /*!< UART Tx Transfer Counter           */
+                                 ^~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:302:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_usart.h:119:3: error: unknown type name 'USART_TypeDef'
+   USART_TypeDef                 *Instance;        /* USART registers base address        */
+   ^~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_usart.h:127:3: error: unknown type name '__IO'
+   __IO uint16_t                 TxXferCount;      /* Usart Tx Transfer Counter           */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_usart.h:127:33: error: expected ':', ',', ';', '}' or '__attribute__' before 'TxXferCount'
+   __IO uint16_t                 TxXferCount;      /* Usart Tx Transfer Counter           */
+                                 ^~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:306:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_irda.h:155:3: error: unknown type name 'USART_TypeDef'
+   USART_TypeDef               *Instance;        /* USART registers base address       */
+   ^~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_irda.h:163:3: error: unknown type name '__IO'
+   __IO uint16_t               TxXferCount;      /* IRDA Tx Transfer Counter           */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_irda.h:163:31: error: expected ':', ',', ';', '}' or '__attribute__' before 'TxXferCount'
+   __IO uint16_t               TxXferCount;      /* IRDA Tx Transfer Counter           */
+                               ^~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:310:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_smartcard.h:174:3: error: unknown type name 'USART_TypeDef'
+   USART_TypeDef                    *Instance;        /* USART registers base address */
+   ^~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_smartcard.h:182:3: error: unknown type name '__IO'
+   __IO uint16_t                    TxXferCount;      /* SmartCard Tx Transfer Counter */
+   ^~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_smartcard.h:182:36: error: expected ':', ',', ';', '}' or '__attribute__' before 'TxXferCount'
+   __IO uint16_t                    TxXferCount;      /* SmartCard Tx Transfer Counter */
+                                    ^~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:314:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:86:3: error: unknown type name 'WWDG_TypeDef'
+   WWDG_TypeDef                 *Instance;  /*!< Register base address    */
+   ^~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43:0,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:208:16: error: unknown type name '__IO'
+ void HAL_Delay(__IO uint32_t Delay);
+                ^~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:177:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+../src/main.c: In function 'SystemClock_Config':
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:529:41: error: unknown type name '__IO'
+                                         __IO uint32_t tmpreg = 0x00U; \
+                                         ^
+../src/main.c:121:3: note: in expansion of macro '__HAL_RCC_PWR_CLK_ENABLE'
+   __HAL_RCC_PWR_CLK_ENABLE();
+   ^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:529:55: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'tmpreg'
+                                         __IO uint32_t tmpreg = 0x00U; \
+                                                       ^
+../src/main.c:121:3: note: in expansion of macro '__HAL_RCC_PWR_CLK_ENABLE'
+   __HAL_RCC_PWR_CLK_ENABLE();
+   ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:48:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:47,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:177,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:530:49: error: 'RCC' undeclared (first use in this function)
+                                         SET_BIT(RCC->APB1ENR, RCC_APB1ENR_PWREN);\
+                                                 ^
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:230:33: note: in definition of macro 'SET_BIT'
+ #define SET_BIT(REG, BIT)     ((REG) |= (BIT))
+                                 ^~~
+../src/main.c:121:3: note: in expansion of macro '__HAL_RCC_PWR_CLK_ENABLE'
+   __HAL_RCC_PWR_CLK_ENABLE();
+   ^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:530:49: note: each undeclared identifier is reported only once for each function it appears in
+                                         SET_BIT(RCC->APB1ENR, RCC_APB1ENR_PWREN);\
+                                                 ^
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:230:33: note: in definition of macro 'SET_BIT'
+ #define SET_BIT(REG, BIT)     ((REG) |= (BIT))
+                                 ^~~
+../src/main.c:121:3: note: in expansion of macro '__HAL_RCC_PWR_CLK_ENABLE'
+   __HAL_RCC_PWR_CLK_ENABLE();
+   ^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:530:63: error: 'RCC_APB1ENR_PWREN' undeclared (first use in this function)
+                                         SET_BIT(RCC->APB1ENR, RCC_APB1ENR_PWREN);\
+                                                               ^
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:230:42: note: in definition of macro 'SET_BIT'
+ #define SET_BIT(REG, BIT)     ((REG) |= (BIT))
+                                          ^~~
+../src/main.c:121:3: note: in expansion of macro '__HAL_RCC_PWR_CLK_ENABLE'
+   __HAL_RCC_PWR_CLK_ENABLE();
+   ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:177:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:532:41: error: 'tmpreg' undeclared (first use in this function)
+                                         tmpreg = READ_BIT(RCC->APB1ENR, RCC_APB1ENR_PWREN);\
+                                         ^
+../src/main.c:121:3: note: in expansion of macro '__HAL_RCC_PWR_CLK_ENABLE'
+   __HAL_RCC_PWR_CLK_ENABLE();
+   ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:292:0,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:270,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:156:61: error: unknown type name '__IO'
+                                                             __IO uint32_t tmpreg = 0x00U;                        \
+                                                             ^
+../src/main.c:126:3: note: in expansion of macro '__HAL_PWR_VOLTAGESCALING_CONFIG'
+   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:156:75: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'tmpreg'
+                                                             __IO uint32_t tmpreg = 0x00U;                        \
+                                                                           ^
+../src/main.c:126:3: note: in expansion of macro '__HAL_PWR_VOLTAGESCALING_CONFIG'
+   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:48:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:47,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:177,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:157:72: error: 'PWR' undeclared (first use in this function)
+                                                             MODIFY_REG(PWR->CR, PWR_CR_VOS, (__REGULATOR__));   \
+                                                                        ^
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:238:33: note: in definition of macro 'WRITE_REG'
+ #define WRITE_REG(REG, VAL)   ((REG) = (VAL))
+                                 ^~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:157:61: note: in expansion of macro 'MODIFY_REG'
+                                                             MODIFY_REG(PWR->CR, PWR_CR_VOS, (__REGULATOR__));   \
+                                                             ^~~~~~~~~~
+../src/main.c:126:3: note: in expansion of macro '__HAL_PWR_VOLTAGESCALING_CONFIG'
+   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:157:81: error: 'PWR_CR_VOS' undeclared (first use in this function)
+                                                             MODIFY_REG(PWR->CR, PWR_CR_VOS, (__REGULATOR__));   \
+                                                                                 ^
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:238:41: note: in definition of macro 'WRITE_REG'
+ #define WRITE_REG(REG, VAL)   ((REG) = (VAL))
+                                         ^~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:157:61: note: in expansion of macro 'MODIFY_REG'
+                                                             MODIFY_REG(PWR->CR, PWR_CR_VOS, (__REGULATOR__));   \
+                                                             ^~~~~~~~~~
+../src/main.c:126:3: note: in expansion of macro '__HAL_PWR_VOLTAGESCALING_CONFIG'
+   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:177:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:139:42: error: 'RCC_CR_HSEON' undeclared (first use in this function)
+ #define RCC_HSE_ON                       RCC_CR_HSEON
+                                          ^
+../src/main.c:130:32: note: in expansion of macro 'RCC_HSE_ON'
+   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+                                ^~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:200:42: error: 'RCC_PLLCFGR_PLLSRC_HSE' undeclared (first use in this function)
+ #define RCC_PLLSOURCE_HSE                RCC_PLLCFGR_PLLSRC_HSE
+                                          ^
+../src/main.c:132:37: note: in expansion of macro 'RCC_PLLSOURCE_HSE'
+   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+                                     ^~~~~~~~~~~~~~~~~
+../src/main.c:137:24: error: 'RCC_PLLInitTypeDef {aka struct <anonymous>}' has no member named 'PLLR'; did you mean 'PLLM'?
+   RCC_OscInitStruct.PLL.PLLR = 2;
+                        ^
+In file included from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/stm32f4xx_hal_conf.h:177:0,
+                 from /Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:48,
+                 from /Users/TheWanderingMind/Development/polyamory/polyamory-stm32f412g-discovery/inc/main.h:43,
+                 from ../src/main.c:39:
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:223:42: error: 'RCC_CFGR_SW_PLL' undeclared (first use in this function)
+ #define RCC_SYSCLKSOURCE_PLLCLK          RCC_CFGR_SW_PLL
+                                          ^
+../src/main.c:148:36: note: in expansion of macro 'RCC_SYSCLKSOURCE_PLLCLK'
+   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+                                    ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:245:42: error: 'RCC_CFGR_HPRE_DIV1' undeclared (first use in this function)
+ #define RCC_SYSCLK_DIV1                  RCC_CFGR_HPRE_DIV1
+                                          ^
+../src/main.c:149:37: note: in expansion of macro 'RCC_SYSCLK_DIV1'
+   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+                                     ^~~~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:262:42: error: 'RCC_CFGR_PPRE1_DIV2' undeclared (first use in this function)
+ #define RCC_HCLK_DIV2                    RCC_CFGR_PPRE1_DIV2
+                                          ^
+../src/main.c:150:38: note: in expansion of macro 'RCC_HCLK_DIV2'
+   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+                                      ^~~~~~~~~~~~~
+/Users/TheWanderingMind/Development/polyamory/stm32f-lib/stm32F4/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:261:42: error: 'RCC_CFGR_PPRE1_DIV1' undeclared (first use in this function)
+ #define RCC_HCLK_DIV1                    RCC_CFGR_PPRE1_DIV1
+                                          ^
+../src/main.c:151:38: note: in expansion of macro 'RCC_HCLK_DIV1'
+   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+                                      ^~~~~~~~~~~~~
+../src/main.c:152:49: error: 'FLASH_LATENCY_3' undeclared (first use in this function)
+   ret = HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3);
+                                                 ^~~~~~~~~~~~~~~
+make: *** [src/main.o] Error 1
+
+20:13:04 Build Finished (took 475ms)
+
