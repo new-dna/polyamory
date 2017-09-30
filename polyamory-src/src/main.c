@@ -67,6 +67,7 @@ static void Display_DemoDescription(void);
 BSP_DemoTypedef  BSP_examples[]=
 {
   {Joystick_demo, "JOYSTICK", 0},
+  {ADC_demo, "ADC", 0},
   {LCD_demo, "LCD", 0},
   {TS_demo, "TS", 0},  
   {SD_demo, "mSD", 0},
@@ -77,7 +78,7 @@ BSP_DemoTypedef  BSP_examples[]=
   {QSPI_demo, "QSPI", 0},
   {AudioPlay_demo, "AUDIO PLAY", 0},
   {AudioRecAnalog_demo, "AUDIO REC ANALOG", 0},
-  {AudioRecDfsdm_demo, "AUDIO REC DFSDM", 0},
+  {AudioRecDfsdm_demo, "AUDIO REC DFSDM", 0}
 };
 
 /* Private functions ---------------------------------------------------------*/

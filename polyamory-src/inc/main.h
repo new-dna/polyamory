@@ -120,6 +120,7 @@ void QSPI_demo(void);
 uint8_t CheckForUserInput(void);
 void Toggle_Leds(void);
 void AudioRecDfsdm_demo(void);
+void ADC_demo(void);
 #endif /* __MAIN_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
