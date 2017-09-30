@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    BSP/Inc/stm32f4xx_it.h 
+  * @file    BSP/Src/log.c 
   * @author  MCD Application Team
   * @version V1.1.0
   * @date    17-February-2017
-  * @brief   This file contains the headers of the interrupt handlers.
+  * @brief   This example code shows how to use the LCD Log firmware functions
   ******************************************************************************
   * @attention
   *
@@ -35,45 +35,91 @@
   ******************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4xx_IT_H
-#define __STM32F4xx_IT_H
-
-#ifdef __cplusplus
- extern "C" {
-#endif 
-
 /* Includes ------------------------------------------------------------------*/
-#include "main.h" 
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+#include "main.h"
+#include "lcd_log.h"
 
-void NMI_Handler(void);
-void HardFault_Handler(void);
-void MemManage_Handler(void);
-void BusFault_Handler(void);
-void UsageFault_Handler(void);
-void SVC_Handler(void);
-void DebugMon_Handler(void);
-void PendSV_Handler(void);
-void SysTick_Handler(void);
-void EXTI0_IRQHandler(void);
-void EXTI3_IRQHandler(void);
-void EXTI9_5_IRQHandler(void);
-void AUDIO_OUT_I2Sx_DMAx_IRQHandler(void); /* I2S tx */
-void AUDIO_IN_I2Sx_DMAx_IRQHandler(void); /* I2S rx */
-void QuadSPI_IRQHandler(void);
-void AUDIO_DFSDM_DMAx_MIC1_IRQHandler(void);
-void AUDIO_DFSDM_DMAx_MIC2_IRQHandler(void);
-void BSP_SD_IRQHandler(void);
-void BSP_SD_DMA_Rx_IRQHandler(void);
+/** @addtogroup STM32F4xx_HAL_Examples
+  * @{
+  */
 
-#ifdef __cplusplus
+/** @addtogroup BSP
+  * @{
+  */
+
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+
+/**
+  * @brief  LCD Log demo 
+  * @param  None
+  * @retval None
+  */
+void Log_demo(void)
+{ 
+  JOYState_TypeDef JoyState = JOY_NONE;
+  uint8_t i = 0;
+
+  BSP_JOY_Init(JOY_MODE_GPIO);
+  
+  /* Initialize LCD Log module */
+  LCD_LOG_Init();
+  
+  /* Show Header and Footer texts */
+  LCD_LOG_SetHeader((uint8_t *)"Log Example");
+  LCD_LOG_SetFooter((uint8_t *)"Use Joystick to scroll");
+
+  /* Output User logs */
+  for (i = 0; i < 10; i++)
+  {
+    LCD_UsrLog ("This is Line %d \n", i);
+  }
+  
+  HAL_Delay(2000);
+  
+   /* Clear Old logs */
+  LCD_LOG_ClearTextZone();
+
+  /* Output new user logs */
+  for (i = 0; i < 30; i++)
+  {
+    LCD_UsrLog ("This is Line %d \n", i);
+  }
+  
+  /* Check for joystick user input for scroll (back and forward) */
+  while (1)
+  {
+    JoyState = BSP_JOY_GetState();
+    switch(JoyState)
+    {
+    case JOY_UP:
+      LCD_LOG_ScrollBack();
+      break;     
+    case JOY_DOWN:
+      LCD_LOG_ScrollForward();
+      break;          
+      
+    default:
+      break;           
+    }
+    if(CheckForUserInput() > 0)
+    {
+      return;
+    }    
+    HAL_Delay (10);
+  }
 }
-#endif
 
-#endif /* __STM32F4xx_IT_H */
+/**
+  * @}
+  */ 
 
+/**
+  * @}
+  */ 
+  
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
