@@ -82,6 +82,10 @@ void ADC_demo(void)
 	        	ADCValue = HAL_ADC_GetValue(&adcHandle);
 	        	MeasurementNumber++;
 	        }
+	        if(CheckForUserInput() > 0)
+	            {
+	                return;
+	            }
 	    }
 
 }
