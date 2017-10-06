@@ -54,10 +54,17 @@
 
 /* Private define ------------------------------------------------------------*/
 
+volatile uint32_t sampleCounter = 0;
+volatile int16_t sample = 0;
+
+float sawWave = 0.0;
+
+float filteredSaw = 0.0;
+
 /*Since SysTick is set to 1ms (unless to set it quicker) */ 
 /* to run up to 48khz, a buffer around 1000 (or more) is requested*/
 /* to run up to 96khz, a buffer around 2000 (or more) is requested*/
-#define AUDIO_BUFFER_SIZE       2048
+#define AUDIO_BUFFER_SIZE       128
 #define AUDIO_DEFAULT_VOLUME    70
 
 /* Audio file size and start address are defined here since the audio file is
@@ -108,6 +115,12 @@ AUDIO_ErrorTypeDef AUDIO_Stop(void);
 /* Private functions ---------------------------------------------------------*/
 
 /**
+ * @brief Fills audio buffer with sine wave at specified tone
+ * @retval None
+ */
+
+
+/**
   * @brief  Audio Play demo
   * @retval None
   */
@@ -116,6 +129,7 @@ void AudioPlay_demo (void)
   uint32_t *AudioFreq_ptr;
   uint8_t status = 0;
   uint8_t FreqStr[25] = {0};
+  fir_8 filt; //our filter for creating tones
   
   AudioFreq_ptr = AudioFreq + 6; /*AF_48K*/
   uwPauseEnabledStatus = 1; /* 0 when audio is running, 1 when Pause is on */
@@ -153,7 +167,9 @@ void AudioPlay_demo (void)
   using Transfer complete and/or half transfer complete interrupts callbacks 
   (DISCOVERY_AUDIO_TransferComplete_CallBack() or DISCOVERY_AUDIO_HalfTransfer_CallBack()...
   */
-  AUDIO_Start(AUDIO_FILE_ADDRESS, AUDIO_FILE_SIZE);
+
+  initFilter(&filt); // initialize our filter
+  AUDIO_Start(&sample, 16);
   
   /* Display the state on the screen */
   BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
@@ -169,14 +185,37 @@ void AudioPlay_demo (void)
   /* Infinite loop */
   while(1)
   {
-    /* IMPORTANT: AUDIO_Process() should be called within a periodic process */    
-    AUDIO_Process();
-    
+
+
+
+
     BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
     BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
     /* Get the Joystick State */
     JoyState = BSP_JOY_GetState();
     
+    //Fill our buffer with something
+	//only update on every second sample to insure that L & R ch. have the same sample value
+	if (sampleCounter & 0x00000001)
+	{
+		sawWave += NOTEFREQUENCY;
+		if (sawWave > 1.0)
+			sawWave -= 2.0;
+
+		filteredSaw = updateFilter(&filt, sawWave);
+
+		sample = (int16_t)(NOTEAMPLITUDE*filteredSaw);
+	}
+	sampleCounter++;
+
+	if (sampleCounter==96000)
+	{
+		sampleCounter = 0;
+	}
+	/* IMPORTANT: AUDIO_Process() should be called within a periodic process */
+    AUDIO_Process();
+
+
     switch(JoyState)
     {
     case JOY_UP:
@@ -332,7 +371,7 @@ uint8_t AUDIO_Process(void)
     if(buffer_ctl.fptr >= AudioFileSize)
     {
       /* Play audio sample again ... */
-      buffer_ctl.fptr = 0; 
+      buffer_ctl.fptr = 0;
       error_state = AUDIO_ERROR_EOF;
     }
 

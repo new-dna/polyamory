@@ -48,6 +48,7 @@
 #include "stm32412g_discovery_audio.h"
 #include "stm32412g_discovery_qspi.h"
 #include "stm32412g_discovery_ts.h"
+#include "filter.h"
 /* Macros --------------------------------------------------------------------*/
 
 
@@ -121,6 +122,8 @@ uint8_t CheckForUserInput(void);
 void Toggle_Leds(void);
 void AudioRecDfsdm_demo(void);
 void ADC_demo(void);
+float updateFilter(fir_8* theFilter, float newValue);
+void initFilter(fir_8* theFilter);
 #endif /* __MAIN_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
