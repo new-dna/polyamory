@@ -1,11 +1,11 @@
 /**
   ******************************************************************************
-  * @file    BSP/Src/stm32f4xx_it.c 
+  * @file    I2S/I2S_Audio/Src/stm32f4xx_it.c
   * @author  MCD Application Team
   * @version V1.1.0
   * @date    17-February-2017
   * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and 
+  *          This file provides template for all exceptions handler and
   *          peripherals interrupt service routine.
   ******************************************************************************
   * @attention
@@ -41,24 +41,20 @@
 #include "main.h"
 #include "stm32f4xx_it.h"
 
-
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
   */
 
-/** @addtogroup BSP
+/** @addtogroup I2S_Audio
   * @{
-  */ 
+  */
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern QSPI_HandleTypeDef               QSPIHandle;
-/* I2S handler declared in "stm32412g_discovery_audio.c" file */
-extern I2S_HandleTypeDef                haudio_i2s;
-extern DFSDM_Filter_HandleTypeDef      hAudioInDfsdmFilter[];
-extern SD_HandleTypeDef uSdHandle;
+extern I2S_HandleTypeDef  haudio_i2s;
+
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -170,36 +166,9 @@ void SysTick_Handler(void)
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f4xx.s).                                               */
 /******************************************************************************/
-
 /**
-  * @brief  This function handles External line 0 interrupt request.
-  * @retval None
-  */
-void EXTI0_IRQHandler(void)
-{
-  HAL_GPIO_EXTI_IRQHandler(BUTTON_WAKEUP);
-}
-
-/**
-  * @brief  This function handles External line 3 interrupt request.
-  * @retval None
-  */
-void EXTI3_IRQHandler(void)
-{
-   HAL_GPIO_EXTI_IRQHandler(SD_DETECT_PIN | LCD_TE_PIN);
-}
-
-/**
-  * @brief  This function handles External line 9_5 interrupt request.
-  * @retval None
-  */
-void EXTI9_5_IRQHandler(void)
-{
-   HAL_GPIO_EXTI_IRQHandler(TS_INT_PIN);
-}
-
-/**
-  * @brief  This function handles DMA1 Stream5 interrupt request.
+* @brief  This function handles the audio DMA interrupt request.
+  * @param  None
   * @retval None
   */
 void AUDIO_OUT_I2Sx_DMAx_IRQHandler(void)
@@ -208,77 +177,8 @@ void AUDIO_OUT_I2Sx_DMAx_IRQHandler(void)
 }
 
 /**
-  * @brief  This function handles DMA1 Stream 0 interrupt request.
-  * @retval None
-  */
-void AUDIO_IN_I2Sx_DMAx_IRQHandler(void)
-{
-  HAL_DMA_IRQHandler(haudio_i2s.hdmarx);
-}
-
-/**
-  * @brief  This function handles QUADSPI interrupt request.
-  * @retval None
-  */
-void QuadSPI_IRQHandler(void)
-{
-  HAL_QSPI_IRQHandler(&QSPIHandle);
-}
-
-/**
-  * @brief  This function handles DFSDM MIC1 DMA interrupt request.
-  * @retval None
-  */
-void AUDIO_DFSDM_DMAx_MIC1_IRQHandler(void)
-{
-  if(SdmmcTest == 1)
-  {
-    HAL_DMA_IRQHandler(uSdHandle.hdmatx); 
-  }
-  else
-  {
-  HAL_DMA_IRQHandler(hAudioInDfsdmFilter[POS_VAL(INPUT_DEVICE_DIGITAL_MIC1)].hdmaReg);
-  }
-}
-
-/**
-  * @brief  This function handles DFSDM MIC2 DMA interrupt request.
-  * @retval None
-  */
-void AUDIO_DFSDM_DMAx_MIC2_IRQHandler(void)
-{
-  HAL_DMA_IRQHandler(hAudioInDfsdmFilter[POS_VAL(INPUT_DEVICE_DIGITAL_MIC2)].hdmaReg);
-}
-
-/**
-  * @brief  Handles SD card interrupt request.
-  * @retval None
-  */
-void BSP_SD_IRQHandler(void)
-{
-  HAL_SD_IRQHandler(&uSdHandle);
-}
-
-/**
-  * @brief  Handles SD DMA Rx transfer interrupt request.
-  * @retval None
-  */
-void BSP_SD_DMA_Rx_IRQHandler(void)
-{
-  HAL_DMA_IRQHandler(uSdHandle.hdmarx);
-}
-
-/**
-  * @brief  This function handles PPP interrupt request.
-  * @retval None
-  */
-/*void PPP_IRQHandler(void)
-{
-}*/
-
-/**
   * @}
-  */ 
+  */
 
 /**
   * @}

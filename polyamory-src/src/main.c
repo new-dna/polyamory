@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    BSP/Src/main.c 
+  * @file    I2S/I2S_Audio/Src/main.c
   * @author  MCD Application Team
   * @version V1.1.0
   * @date    17-February-2017
-  * @brief   This example code shows how to use the STM32412G_DISCOVERY BSP Drivers
+  * @brief   Main program body
   ******************************************************************************
   * @attention
   *
@@ -43,118 +43,280 @@
   * @{
   */
 
-/** @addtogroup BSP
+/** @addtogroup I2S_Audio
   * @{
-  */ 
+  */
 
 /* Private typedef -----------------------------------------------------------*/
+typedef struct
+{
+  uint32_t   ChunkID;       /* 0 */
+  uint32_t   FileSize;      /* 4 */
+  uint32_t   FileFormat;    /* 8 */
+  uint32_t   SubChunk1ID;   /* 12 */
+  uint32_t   SubChunk1Size; /* 16*/
+  uint16_t   AudioFormat;   /* 20 */
+  uint16_t   NbrChannels;   /* 22 */
+  uint32_t   SampleRate;    /* 24 */
+
+  uint32_t   ByteRate;      /* 28 */
+  uint16_t   BlockAlign;    /* 32 */
+  uint16_t   BitPerSample;  /* 34 */
+  uint32_t   SubChunk2ID;   /* 36 */
+  uint32_t   SubChunk2Size; /* 40 */
+
+}WAVE_FormatTypeDef;
+
+typedef enum
+{
+  AUDIO_STATE_IDLE = 0,
+  AUDIO_STATE_INIT,
+  AUDIO_STATE_PLAYING,
+}AUDIO_PLAYBACK_StateTypeDef;
+
 /* Private define ------------------------------------------------------------*/
+/* Audio file size and start offset address are defined here since the audio wave file is
+   stored in Flash memory as a constant table of 16-bit data
+ */
+#define AUDIO_FILE_SIZE               147500       /* Size of audio file */
+#define AUDIO_START_OFFSET_ADDRESS    44           /* Offset relative to audio file header size */
+#define AUDIO_FILE_ADDRESS            0x08080000   /* Audio file address */
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-uint8_t DemoIndex = 0;
-uint8_t NbLoop = 1;
-uint32_t SdmmcTest = 0; 
-/* Global variables ----------------------------------------------------------*/
-uint8_t SDDetectIT = 0;
-/* Global extern variables ---------------------------------------------------*/
-#ifndef USE_FULL_ASSERT
-uint16_t ErrorCounter = 0;
-#endif
+__IO uint32_t uwCommand = AUDIO_PAUSE;
+__IO uint32_t uwVolume = 70;
+  uint8_t Volume_string[20] = {0};
+
+uint32_t AudioTotalSize = 0xFFFF;  /* This variable holds the total size of the audio file */
+uint32_t AudioRemSize   = 0xFFFF;  /* This variable holds the remaining data in audio file */
+uint16_t* CurrentPos;              /* This variable holds the current position address of audio data */
+static AUDIO_PLAYBACK_StateTypeDef  audio_state;
+
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
-static void Display_DemoDescription(void);
-
-BSP_DemoTypedef  BSP_examples[]=
-{
-  //{Joystick_demo, "JOYSTICK", 0},
-  {ADC_demo, "ADC", 0},
-  //{LCD_demo, "LCD", 0},
-  //{TS_demo, "TS", 0},
-  //{SD_demo, "mSD", 0},
-  //{SD_DMA_demo, "mSD in DMA Mode", 0},
-  //{SD_exti_demo, "mSD exti detect", 0},
-  //{Log_demo, "LCD LOG", 0},
-  //{EEPROM_demo, "EEPROM", 0},
-  //{QSPI_demo, "QSPI", 0},
-  {AudioPlay_demo, "AUDIO PLAY", 0}
-  //{AudioRecAnalog_demo, "AUDIO REC ANALOG", 0},
-  //{AudioRecDfsdm_demo, "AUDIO REC DFSDM", 0}
-};
+static void Display_ExampleDescription(void);
+static void AudioPlay_SetHint(void);
+static void AudioPlay_DisplayInfos(WAVE_FormatTypeDef * format);
+static void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief  Main program
+  * @brief  Main program.
   * @param  None
   * @retval None
   */
 int main(void)
-{ 
+{
+  WAVE_FormatTypeDef *waveformat =  NULL;
+
   /* STM32F4xx HAL library initialization:
-       - Configure the Flash prefetch, instruction and Data caches
-       - Configure the Systick to generate an interrupt each 1 msec
+       - Configure the Flash prefetch
+       - Systick timer is configured by default as source of time base, but user
+         can eventually implement his proper time base source (a general purpose
+         timer for example or other time source), keeping in mind that Time base
+         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and
+         handled in milliseconds basis.
        - Set NVIC Group Priority to 4
-       - Global MSP (MCU Support Package) initialization
-     */
+       - Low Level Initialization
+   */
   HAL_Init();
-  
-  /* Configure the system clock to 100 Mhz */
+
+  /* Configure the system clock to 100 MHz */
   SystemClock_Config();
 
+  /* Initialize the LEDs */
   BSP_LED_Init(LED1);
-  BSP_LED_Init(LED2); 
+  BSP_LED_Init(LED2);
   BSP_LED_Init(LED3);
-  BSP_LED_Init(LED4); 
+  BSP_LED_Init(LED4);
 
-  BSP_LED_On(LED1);
-  BSP_LED_On(LED2); 
-  BSP_LED_On(LED3);
-  BSP_LED_On(LED4); 
- 
-  /* Configure the User Button in GPIO Mode */
-  BSP_PB_Init(BUTTON_WAKEUP, BUTTON_MODE_GPIO);
+  /*##-1- Initialize the Keys Push buttons and LCD #####################*/
 
-  /*##-1- Initialize the LCD #################################################*/
+  /* Initialize all joystick's buttons in GPIO mode */
+  /* Used buttons are as follows
+     + Joystick Sel push-button : Pause / Resume
+     + Joystick UP push-button : Volume High
+     + Joystick DOWN push-button : Volume Low
+   */
+  BSP_JOY_Init(JOY_MODE_GPIO);
+
   /* Initialize the LCD */
   BSP_LCD_Init();
 
-  Display_DemoDescription();
-     
-  /* Wait For User inputs */
-  while (1)
-  {
-    if(BSP_PB_GetState(BUTTON_WAKEUP) != RESET)
-    {
-      while (BSP_PB_GetState(BUTTON_WAKEUP) != RESET);   /* Wait for button released */
-      
-      BSP_examples[DemoIndex++].DemoFunc();
-      
-      if(DemoIndex >= COUNT_OF_EXAMPLE(BSP_examples))
-      {
-        /* Increment number of loops which be used by EEPROM example */
-        NbLoop++;
-        DemoIndex = 0;
-      }
-      Display_DemoDescription();
-    }
-  }
-}
+  /*##-2- Display welcome messages on LCD ####################################*/
+  Display_ExampleDescription();
 
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @param  None
-  * @retval None
-  */
-static void Error_Handler(void)
-{
+  /* Wait for Joystick Sel push-button press before starting the Example */
+  while (BSP_JOY_GetState() != JOY_SEL)
+  {
+  }
+
+  /* Wait for Joystick Sel push-button release before starting the Example */
+  while (BSP_JOY_GetState() == JOY_SEL)
+  {
+  }
+
+  /*##-3- Display Example Template ###########################################*/
+  AudioPlay_SetHint();
+
+  /*##-4- Turn on LEDs available on STM32412G-DISCOVERY Eval board ###################*/
+  BSP_LED_On(LED1);
+  BSP_LED_On(LED2);
+  BSP_LED_On(LED3);
+  BSP_LED_On(LED4);
+
+  /* Set audio initialization state */
+  audio_state = AUDIO_STATE_INIT;
+
+  /* Initialize the Audio codec and all related peripherals (I2S, I2C, IOs...) */
+  if (BSP_AUDIO_OUT_Init(OUTPUT_DEVICE_AUTO, uwVolume, I2S_AUDIOFREQ_8K) != AUDIO_OK)
+  {
+    /* Initialization Error */
+    BSP_LCD_SetTextColor(LCD_COLOR_RED);
+    BSP_LCD_SetFont(&Font12);
+    BSP_LCD_DisplayStringAt(20, 116, (uint8_t*)"Initialization problem", CENTER_MODE);
+    Error_Handler();
+  }
+  else
+  {
+    BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+    BSP_LCD_SetFont(&Font12);
+    BSP_LCD_DisplayStringAt(20, 116, (uint8_t *)"Audio Codec Ready", LEFT_MODE);
+  }
+
+  /* Set audio playing state */
+  audio_state = AUDIO_STATE_PLAYING;
+
+  /*##-5- Display information related to control and Playback state #*/
+  /* Retrieve Wave Sample rate */
+  waveformat = (WAVE_FormatTypeDef*)AUDIO_FILE_ADDRESS;
+  AudioPlay_DisplayInfos(waveformat);
+
+  /*##-6- Start AUDIO playback #####################################*/
+  /*
+  Normal mode description:
+      Start playing the audio file (using DMA).
+      Using this mode, the application can run other tasks in parallel since
+      the DMA is handling the Audio Transfer instead of the CPU.
+      The only task remaining for the CPU will be the management of the DMA
+      Transfer Complete interrupt or the Half Transfer Complete interrupt in
+      order to load again the buffer and to calculate the remaining data.
+  Circular mode description:
+     Start playing the file from a circular buffer, once the DMA is enabled it
+     always run. User has to fill periodically the buffer with the audio data
+     using Transfer complete and/or half transfer complete interrupts callbacks
+     (BSP_AUDIO_OUT_TransferComplete_CallBack() or BSP_AUDIO_OUT_HalfTransfer_CallBack()...
+     In this case the audio data file is smaller than the DMA max buffer
+     size 65535 so there is no need to load buffer continuously or manage the
+     transfer complete or Half transfer interrupts callbacks.
+   */
+
+  /* Set the total number of data to be played (count in half-word) */
+  AudioTotalSize = (AUDIO_FILE_SIZE - AUDIO_START_OFFSET_ADDRESS)/(waveformat->NbrChannels);
+  /* Set the current audio pointer position */
+  CurrentPos = (uint16_t*)(AUDIO_FILE_ADDRESS + AUDIO_START_OFFSET_ADDRESS);
+  /* Start the audio player */
+  BSP_AUDIO_OUT_Play((uint16_t*)CurrentPos, (uint32_t)(AUDIO_FILE_SIZE - AUDIO_START_OFFSET_ADDRESS));
+  /* Update the remaining number of data to be played */
+  AudioRemSize = AudioTotalSize - DMA_MAX(AudioTotalSize);
+  /* Update the current audio pointer position */
+  CurrentPos += DMA_MAX(AudioTotalSize);
+  /* Display the state on the screen */
+  BSP_LCD_SetTextColor(LCD_COLOR_ORANGE);
+  BSP_LCD_DisplayStringAt(0, 215, (uint8_t *)"Playback on-going", CENTER_MODE);
+  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+
+  /* Infinite loop */
   while(1)
   {
+    /* Check on the Pause/Resume button */
+    if(BSP_JOY_GetState() == JOY_SEL)
+    {
+      /* Wait to avoid rebound */
+      while(BSP_JOY_GetState() == JOY_SEL);
+      if(uwCommand == AUDIO_PAUSE)
+      {
+        BSP_AUDIO_OUT_Pause();
+        /* Display the current state of the player */
+        BSP_LCD_SetTextColor(LCD_COLOR_BROWN);
+        BSP_LCD_DisplayStringAt(0, 215, (uint8_t *)"Playback paused  ", CENTER_MODE);
+        BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+
+        /* Next time Resume command should be processed */
+        uwCommand = AUDIO_RESUME;
+      }
+      else
+      {
+        BSP_AUDIO_OUT_Resume();
+        /* Display the current state of the player */
+        BSP_LCD_SetTextColor(LCD_COLOR_ORANGE);
+        BSP_LCD_DisplayStringAt(0, 215, (uint8_t *)"Playback on-going", CENTER_MODE);
+        BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+
+        /* Next time Pause command should be processed */
+        uwCommand = AUDIO_PAUSE;
+      }
+    }
+    /* Check on the Volume Low button */
+    if (BSP_JOY_GetState() == JOY_DOWN)
+    {
+      /* Wait to avoid rebound */
+      while (BSP_JOY_GetState() == JOY_DOWN);
+      /* Decrease volume by 5% */
+      if (uwVolume > 5)
+      {
+        uwVolume -= 5;
+      }
+      else
+      {
+        uwVolume = 0;
+      }
+
+      /* Apply the new volume to the codec */
+      BSP_AUDIO_OUT_SetVolume(uwVolume);
+      sprintf((char *) Volume_string, "Volume : %lu%% ", uwVolume);
+      BSP_LCD_DisplayStringAt(20, BSP_LCD_GetYSize()-79, Volume_string, LEFT_MODE);
+    }
+    /* Check on the Volume High button */
+    if (BSP_JOY_GetState() == JOY_UP)
+    {
+      /* Wait to avoid rebound */
+      while (BSP_JOY_GetState() == JOY_UP);
+      /* Increase volume by 5% */
+      if (uwVolume < 95)
+      {
+        uwVolume += 5;
+      }
+      else
+      {
+        uwVolume = 100;
+      }
+
+      /* Apply the new volume to the codec */
+      BSP_AUDIO_OUT_SetVolume(uwVolume);
+      sprintf((char *) Volume_string, "Volume : %lu%% ", uwVolume);
+      BSP_LCD_DisplayStringAt(20, BSP_LCD_GetYSize()-79, Volume_string, LEFT_MODE);
+    }
+
+    /* Toggle LED3 */
+    BSP_LED_Toggle(LED3);
+
+    /* Insert 100 ms delay */
+    HAL_Delay(100);
+
+    /* Toggle LED2 */
+    BSP_LED_Toggle(LED2);
+
+    /* Insert 100 ms delay */
+    HAL_Delay(100);
   }
 }
 
 /**
   * @brief  System Clock Configuration
-  *         The system Clock is configured as follow : 
+  *         The system Clock is configured as follow :
   *            System Clock source            = PLL (HSE)
   *            SYSCLK(Hz)                     = 100000000
   *            HCLK(Hz)                       = 100000000
@@ -177,14 +339,13 @@ static void SystemClock_Config(void)
 {
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
   RCC_OscInitTypeDef RCC_OscInitStruct;
-  
   HAL_StatusTypeDef ret = HAL_OK;
 
   /* Enable Power Control clock */
   __HAL_RCC_PWR_CLK_ENABLE();
 
-  /* The voltage scaling allows optimizing the power consumption when the device is 
-     clocked below the maximum system frequency, to update the voltage scaling value 
+  /* The voltage scaling allows optimizing the power consumption when the device is
+     clocked below the maximum system frequency, to update the voltage scaling value
      regarding system frequency refer to product datasheet.  */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
@@ -202,10 +363,10 @@ static void SystemClock_Config(void)
   
   if(ret != HAL_OK)
   {
-    Error_Handler();
+    while(1) { ; }
   }
 
-  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 
+  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
      clocks dividers */
   RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
@@ -215,91 +376,186 @@ static void SystemClock_Config(void)
   ret = HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3);
   if(ret != HAL_OK)
   {
-    Error_Handler();
+    while(1) { ; }
   }
-  
 }
 
 /**
-  * @brief  Display main demo messages.
+  * @brief  Display main example message
   * @param  None
   * @retval None
   */
-static void Display_DemoDescription(void)
+static void Display_ExampleDescription(void)
 {
-  uint8_t desc[50];
-  
   BSP_LCD_SetFont(&LCD_DEFAULT_FONT);
   
-  /* Clear the LCD */ 
-  BSP_LCD_SetBackColor(LCD_COLOR_WHITE); 
+  /* Clear the LCD */
+  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
   BSP_LCD_Clear(LCD_COLOR_WHITE);
-  
+
   /* Set the LCD Text Color */
-  BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);  
-  
+  BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
+
   /* Display LCD messages */
-  BSP_LCD_DisplayStringAt(0, 2, (uint8_t *)"STM32F412G BSP", CENTER_MODE);
-  BSP_LCD_DisplayStringAt(0, 14, (uint8_t *)"Drivers examples", CENTER_MODE);
+  BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"STM32F412xG Example", CENTER_MODE);
   
   /* Draw Bitmap */
-  BSP_LCD_DrawBitmap((BSP_LCD_GetXSize() - 80)/2, 30, (uint8_t *)stlogo);
+  BSP_LCD_DrawBitmap((BSP_LCD_GetXSize() - 80)/2, 35, (uint8_t *)stlogo);
+
+  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()- 35, (uint8_t *)"Copyright (c)", CENTER_MODE);
+  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()- 20, (uint8_t *)"STMicroelectronics 2017", CENTER_MODE);
   
-  BSP_LCD_SetFont(&Font12);
-  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()-12, (uint8_t *)"STMicroelectronics 2017", CENTER_MODE);
-  
-  BSP_LCD_SetFont(&Font12);
-  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
-  BSP_LCD_FillRect(0, BSP_LCD_GetYSize()/2 + 1, BSP_LCD_GetXSize(), 60);
+  BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
+  BSP_LCD_FillRect(0, BSP_LCD_GetYSize()/2 - 10, BSP_LCD_GetXSize(), 60);
   BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-  BSP_LCD_SetBackColor(LCD_COLOR_BLUE); 
-  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/2 + 20, (uint8_t *)"Press button to start :", CENTER_MODE);
-  sprintf((char *)desc,"%s example", BSP_examples[DemoIndex].DemoName);
-  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/2 + 35, (uint8_t *)desc, CENTER_MODE);
+  BSP_LCD_SetBackColor(LCD_COLOR_DARKBLUE);
+  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/2, (uint8_t *)"Press Joystick sel-button", CENTER_MODE);
+  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/2 + 15, (uint8_t *)"to start :", CENTER_MODE);
+  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/2 + 30, (uint8_t *)"AUDIO playback Example", CENTER_MODE);
 }
 
 /**
-  * @brief  Check for user input.
+  * @brief  Display AUDIO Playback Demo Hint
   * @param  None
-  * @retval Input state (1 : active / 0 : Inactive)
-  */
-uint8_t CheckForUserInput(void)
-{
-  if(BSP_PB_GetState(BUTTON_WAKEUP) != RESET)
-  {
-    HAL_Delay(100);
-    while (BSP_PB_GetState(BUTTON_WAKEUP) != RESET);
-    return 1 ;
-  }
-  return 0;
-}
-
-/**
-  * @brief EXTI line detection callbacks.
-  * @param GPIO_Pin: Specifies the pins connected EXTI line
   * @retval None
   */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+static void AudioPlay_SetHint(void)
 {
-  static uint32_t debounce_time = 0;
+  /* Clear the LCD */
+  BSP_LCD_Clear(LCD_COLOR_WHITE);
+  
+  /* Set LCD Demo description */
+  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+  BSP_LCD_FillRect(0, 0, BSP_LCD_GetXSize(), 95);
+  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+  BSP_LCD_SetBackColor(LCD_COLOR_BLUE);
+  BSP_LCD_SetFont(&Font20);
+  BSP_LCD_DisplayStringAt(0, 10, (uint8_t*)"AUDIO Playback", CENTER_MODE);
+  BSP_LCD_SetFont(&Font12);
+  BSP_LCD_DisplayStringAt(0, 45, (uint8_t*)"This example provides basic", CENTER_MODE);
+  BSP_LCD_DisplayStringAt(0, 60, (uint8_t*)"implementation of audio features", CENTER_MODE);
+  BSP_LCD_DisplayStringAt(0, 75, (uint8_t*)"through the I2S peripheral ", CENTER_MODE);
 
-  if(GPIO_Pin == BUTTON_WAKEUP)
+   /* Set the LCD Text Color */
+  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+  BSP_LCD_DrawRect(10, 105, BSP_LCD_GetXSize() - 20, BSP_LCD_GetYSize()- 115);
+  BSP_LCD_DrawRect(11, 106, BSP_LCD_GetXSize() - 22, BSP_LCD_GetYSize()- 117);
+
+  /* Prepare LCD to display */
+  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
+  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+  BSP_LCD_FillRect(12, 107, BSP_LCD_GetXSize() - 24, BSP_LCD_GetYSize()- 119);
+  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+}
+
+/**
+  * @brief  Display audio file and control information
+  * @param  format : structure containing informations of the audio file
+  * @retval None
+  */
+static void AudioPlay_DisplayInfos(WAVE_FormatTypeDef * format)
+{
+  uint8_t string[50] = {0};
+
+  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+
+  sprintf((char *) string, "Sampling frequency : %lu Hz", format->SampleRate);
+  BSP_LCD_DisplayStringAt(20, 131, string, LEFT_MODE);
+
+  if (format->NbrChannels == 2)
   {
-    /* Prevent debounce effect for user key */
-    if((HAL_GetTick() - debounce_time) > 50)
-    {
-      debounce_time = HAL_GetTick();
-    }
+    sprintf((char *) string, "Format : %d bits stereo", format->BitPerSample);
+    BSP_LCD_DisplayStringAt(20, 146, string, LEFT_MODE);
   }
-  else if (GPIO_Pin == SD_DETECT_PIN)
+  else if (format->NbrChannels == 1)
   {
-    /* SDDetectIT global variable set to notice SD_exti_demo changing state on SD_DETECT_PIN */
-    SDDetectIT = 1;
+    sprintf((char *) string, "Format : %d bits mono", format->BitPerSample);
+    BSP_LCD_DisplayStringAt(20, 146, string, LEFT_MODE);
+  }
+
+  sprintf((char *) Volume_string, "Volume : %lu%% ", uwVolume);
+  BSP_LCD_DisplayStringAt(20, BSP_LCD_GetYSize()-79, Volume_string, LEFT_MODE);
+
+  BSP_LCD_DisplayStringAt(20, 176, (uint8_t *)"Joy Sel: Pause/Resume", LEFT_MODE);
+  BSP_LCD_DisplayStringAt(20, 191, (uint8_t *)"Joy UP/DOWN: change Volume", LEFT_MODE);
+}
+
+/*------------------------------------------------------------------------------
+       Callbacks implementation:
+           the callbacks API are defined __weak in the stm32412g_discovery_audio.c file
+           and their implementation should be done the user code if they are needed.
+           Below some examples of callback implementations.
+  ----------------------------------------------------------------------------*/
+/**
+  * @brief  Manages the full Transfer complete event.
+  * @param  None
+  * @retval None
+  */
+void BSP_AUDIO_OUT_TransferComplete_CallBack(void)
+{
+  if (audio_state == AUDIO_STATE_PLAYING)
+  {
+    /* Calculate the remaining audio data in the file and the new size
+    for the DMA transfer. If the Audio files size is less than the DMA max
+    data transfer size, so there is no calculation to be done, just restart
+    from the beginning of the file ... */
+    /* Check if the end of file has been reached */
+    if(AudioRemSize > 0)
+    {
+      /* Replay from the current position */
+      BSP_AUDIO_OUT_ChangeBuffer((uint16_t*)CurrentPos, DMA_MAX(AudioRemSize));
+
+      /* Update the current pointer position */
+      CurrentPos += DMA_MAX(AudioRemSize);
+
+      /* Update the remaining number of data to be played */
+      AudioRemSize -= DMA_MAX(AudioRemSize);
+    }
+    else
+    {
+      /* Set the current audio pointer position */
+      CurrentPos = (uint16_t*)(AUDIO_FILE_ADDRESS + AUDIO_START_OFFSET_ADDRESS);
+      /* Replay from the beginning */
+      BSP_AUDIO_OUT_Play((uint16_t*)CurrentPos,  (uint32_t)(AUDIO_FILE_SIZE - AUDIO_START_OFFSET_ADDRESS));
+      /* Update the remaining number of data to be played */
+      AudioRemSize = AudioTotalSize - DMA_MAX(AudioTotalSize);
+      /* Update the current audio pointer position */
+      CurrentPos += DMA_MAX(AudioTotalSize);
+    }
   }
 }
 
-#ifdef USE_FULL_ASSERT
+/**
+  * @brief  Manages the DMA FIFO error event.
+  * @param  None
+  * @retval None
+  */
+void BSP_AUDIO_OUT_Error_CallBack(void)
+{
+  /* Display message on the LCD screen */
+  BSP_LCD_SetTextColor(LCD_COLOR_RED);
+  BSP_LCD_DisplayStringAt(0, 215, (uint8_t *)"    DMA  ERROR    ", CENTER_MODE);
 
+  /* Stop the program with an infinite loop */
+  while (1)
+  {
+  }
+}
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @param  None
+  * @retval None
+  */
+static void Error_Handler(void)
+{
+  /* Stop the program with an infinite loop */
+  while(1)
+  {
+  }
+}
+
+#ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -307,8 +563,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t* file, uint32_t line)
-{ 
+void assert_failed(uint8_t *file, uint32_t line)
+{
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
@@ -317,14 +573,14 @@ void assert_failed(uint8_t* file, uint32_t line)
   {
   }
 }
-#endif /* USE_FULL_ASSERT */ 
-
-/**
-  * @}
-  */ 
+#endif
 
 /**
   * @}
   */
-  
+
+/**
+  * @}
+  */
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
