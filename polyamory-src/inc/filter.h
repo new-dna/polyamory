@@ -5,8 +5,9 @@
 //Defines
 
 
-#define NOTEFREQUENCY 0.0458		//frequency of saw wave: f0 = 0.5 * NOTEFREQUENCY * 48000 (=sample rate)
-#define NOTEAMPLITUDE 1000.0		//amplitude of the saw wave
+#define NOTEFREQUENCY 0.0158		//frequency of saw wave: f0 = 0.5 * NOTEFREQUENCY * 48000 (=sample rate)
+#define NOTEFREQUENCY2 0.0458
+#define NOTEAMPLITUDE 750.0		//amplitude of the saw wave
 
 
 typedef struct {

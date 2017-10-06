@@ -1,42 +1,13 @@
-/**
-  ******************************************************************************
-  * @file    I2S/I2S_Audio/Src/main.c
-  * @author  MCD Application Team
-  * @version V1.1.0
-  * @date    17-February-2017
-  * @brief   Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
-  *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************
-  */
+/*
+ * osc.c
+ *
+ *  Created on: Oct 6, 2017
+ *      Author: Nick McCarty
+ */
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "filter.h"
 #include "stlogo.h"
 
 /** @addtogroup STM32F4xx_HAL_Examples
@@ -64,8 +35,9 @@ typedef struct
   uint16_t   BitPerSample;  /* 34 */
   uint32_t   SubChunk2ID;   /* 36 */
   uint32_t   SubChunk2Size; /* 40 */
+  uint32_t 	BufferLen; /*44*/
 
-}WAVE_FormatTypeDef;
+}AUDIO_FormatTypeDef, *pAUDIO_FormatTypeDef;
 
 typedef enum
 {
@@ -74,31 +46,32 @@ typedef enum
   AUDIO_STATE_PLAYING,
 }AUDIO_PLAYBACK_StateTypeDef;
 
-/* Private define ------------------------------------------------------------*/
-/* Audio file size and start offset address are defined here since the audio wave file is
-   stored in Flash memory as a constant table of 16-bit data
- */
-#define AUDIO_FILE_SIZE               147500       /* Size of audio file */
-#define AUDIO_START_OFFSET_ADDRESS    44           /* Offset relative to audio file header size */
-#define AUDIO_FILE_ADDRESS            0x08080000   /* Audio file address */
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 __IO uint32_t uwCommand = AUDIO_PAUSE;
 __IO uint32_t uwVolume = 70;
-  uint8_t Volume_string[20] = {0};
+uint8_t Volume_string[20] = {0};
+uint16_t        audiobuff[BUFF_LEN];  // The circular audio buffer
+fir_8 filt; //low-pass filter
+volatile int16_t sample = 0;
+float sawWave = 0.0;
+float filteredSaw = 0.0;
 
-uint32_t AudioTotalSize = 0xFFFF;  /* This variable holds the total size of the audio file */
-uint32_t AudioRemSize   = 0xFFFF;  /* This variable holds the remaining data in audio file */
-uint16_t* CurrentPos;              /* This variable holds the current position address of audio data */
+fir_8 filt2; //low-pass filter
+volatile int16_t sample2 = 0;
+float sawWave2 = 0.0;
+float filteredSaw2 = 0.0;
+
 static AUDIO_PLAYBACK_StateTypeDef  audio_state;
 
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Display_ExampleDescription(void);
 static void AudioPlay_SetHint(void);
-static void AudioPlay_DisplayInfos(WAVE_FormatTypeDef * format);
+static void AudioPlay_DisplayInfos(AUDIO_FormatTypeDef * format);
 static void Error_Handler(void);
+static void play_buffer(uint16_t offset, uint16_t len);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -109,7 +82,12 @@ static void Error_Handler(void);
   */
 int main(void)
 {
-  WAVE_FormatTypeDef *waveformat =  NULL;
+	AUDIO_FormatTypeDef audioformat;
+	pAUDIO_FormatTypeDef paudioformat;
+	paudioformat = &audioformat;
+	paudioformat->NbrChannels = 2;
+	paudioformat->SampleRate = I2S_AUDIOFREQ_48K;
+	paudioformat->BufferLen = BUFF_LEN;
 
   /* STM32F4xx HAL library initialization:
        - Configure the Flash prefetch
@@ -122,6 +100,8 @@ int main(void)
        - Low Level Initialization
    */
   HAL_Init();
+  initFilter(&filt);
+  initFilter(&filt2);
 
   /* Configure the system clock to 100 MHz */
   SystemClock_Config();
@@ -171,7 +151,7 @@ int main(void)
   audio_state = AUDIO_STATE_INIT;
 
   /* Initialize the Audio codec and all related peripherals (I2S, I2C, IOs...) */
-  if (BSP_AUDIO_OUT_Init(OUTPUT_DEVICE_AUTO, uwVolume, I2S_AUDIOFREQ_8K) != AUDIO_OK)
+  if (BSP_AUDIO_OUT_Init(OUTPUT_DEVICE_AUTO, uwVolume, paudioformat->SampleRate) != AUDIO_OK)
   {
     /* Initialization Error */
     BSP_LCD_SetTextColor(LCD_COLOR_RED);
@@ -189,44 +169,19 @@ int main(void)
   /* Set audio playing state */
   audio_state = AUDIO_STATE_PLAYING;
 
-  /*##-5- Display information related to control and Playback state #*/
-  /* Retrieve Wave Sample rate */
-  waveformat = (WAVE_FormatTypeDef*)AUDIO_FILE_ADDRESS;
-  AudioPlay_DisplayInfos(waveformat);
 
-  /*##-6- Start AUDIO playback #####################################*/
-  /*
-  Normal mode description:
-      Start playing the audio file (using DMA).
-      Using this mode, the application can run other tasks in parallel since
-      the DMA is handling the Audio Transfer instead of the CPU.
-      The only task remaining for the CPU will be the management of the DMA
-      Transfer Complete interrupt or the Half Transfer Complete interrupt in
-      order to load again the buffer and to calculate the remaining data.
-  Circular mode description:
-     Start playing the file from a circular buffer, once the DMA is enabled it
-     always run. User has to fill periodically the buffer with the audio data
-     using Transfer complete and/or half transfer complete interrupts callbacks
-     (BSP_AUDIO_OUT_TransferComplete_CallBack() or BSP_AUDIO_OUT_HalfTransfer_CallBack()...
-     In this case the audio data file is smaller than the DMA max buffer
-     size 65535 so there is no need to load buffer continuously or manage the
-     transfer complete or Half transfer interrupts callbacks.
-   */
+  /* Display Audio Format information */
+  AudioPlay_DisplayInfos(paudioformat);
 
-  /* Set the total number of data to be played (count in half-word) */
-  AudioTotalSize = (AUDIO_FILE_SIZE - AUDIO_START_OFFSET_ADDRESS)/(waveformat->NbrChannels);
-  /* Set the current audio pointer position */
-  CurrentPos = (uint16_t*)(AUDIO_FILE_ADDRESS + AUDIO_START_OFFSET_ADDRESS);
+
   /* Start the audio player */
-  BSP_AUDIO_OUT_Play((uint16_t*)CurrentPos, (uint32_t)(AUDIO_FILE_SIZE - AUDIO_START_OFFSET_ADDRESS));
-  /* Update the remaining number of data to be played */
-  AudioRemSize = AudioTotalSize - DMA_MAX(AudioTotalSize);
-  /* Update the current audio pointer position */
-  CurrentPos += DMA_MAX(AudioTotalSize);
+  BSP_AUDIO_OUT_Play((uint16_t*)audiobuff, paudioformat->BufferLen);
+
   /* Display the state on the screen */
   BSP_LCD_SetTextColor(LCD_COLOR_ORANGE);
   BSP_LCD_DisplayStringAt(0, 215, (uint8_t *)"Playback on-going", CENTER_MODE);
   BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+
 
   /* Infinite loop */
   while(1)
@@ -453,7 +408,7 @@ static void AudioPlay_SetHint(void)
   * @param  format : structure containing informations of the audio file
   * @retval None
   */
-static void AudioPlay_DisplayInfos(WAVE_FormatTypeDef * format)
+static void AudioPlay_DisplayInfos(AUDIO_FormatTypeDef * format)
 {
   uint8_t string[50] = {0};
 
@@ -486,6 +441,28 @@ static void AudioPlay_DisplayInfos(WAVE_FormatTypeDef * format)
            and their implementation should be done the user code if they are needed.
            Below some examples of callback implementations.
   ----------------------------------------------------------------------------*/
+
+//---------------------------------------------------------------------------
+/**
+ * @brief  Manages the DMA Half Transfer complete interrupt.
+ * @param  None
+ * @retval None
+ */
+void BSP_AUDIO_OUT_HalfTransfer_CallBack(void)
+{
+	/* Generally this interrupt routine is used to load the buffer when
+  a streaming scheme is used: When first Half buffer is already transferred load
+  the new data to the first half of buffer while DMA is transferring data from
+  the second half. And when Transfer complete occurs, load the second half of
+  the buffer while the DMA is transferring from the first half ... */
+
+	//STM_EVAL_LEDToggle(LED6);
+	play_buffer(0, BUFF_LEN_DIV4);
+	//STM_EVAL_LEDToggle(LED6);
+
+}
+
+
 /**
   * @brief  Manages the full Transfer complete event.
   * @param  None
@@ -493,36 +470,9 @@ static void AudioPlay_DisplayInfos(WAVE_FormatTypeDef * format)
   */
 void BSP_AUDIO_OUT_TransferComplete_CallBack(void)
 {
-  if (audio_state == AUDIO_STATE_PLAYING)
-  {
-    /* Calculate the remaining audio data in the file and the new size
-    for the DMA transfer. If the Audio files size is less than the DMA max
-    data transfer size, so there is no calculation to be done, just restart
-    from the beginning of the file ... */
-    /* Check if the end of file has been reached */
-    if(AudioRemSize > 0)
-    {
-      /* Replay from the current position */
-      BSP_AUDIO_OUT_ChangeBuffer((uint16_t*)CurrentPos, DMA_MAX(AudioRemSize));
 
-      /* Update the current pointer position */
-      CurrentPos += DMA_MAX(AudioRemSize);
-
-      /* Update the remaining number of data to be played */
-      AudioRemSize -= DMA_MAX(AudioRemSize);
-    }
-    else
-    {
-      /* Set the current audio pointer position */
-      CurrentPos = (uint16_t*)(AUDIO_FILE_ADDRESS + AUDIO_START_OFFSET_ADDRESS);
-      /* Replay from the beginning */
-      BSP_AUDIO_OUT_Play((uint16_t*)CurrentPos,  (uint32_t)(AUDIO_FILE_SIZE - AUDIO_START_OFFSET_ADDRESS));
-      /* Update the remaining number of data to be played */
-      AudioRemSize = AudioTotalSize - DMA_MAX(AudioTotalSize);
-      /* Update the current audio pointer position */
-      CurrentPos += DMA_MAX(AudioTotalSize);
-    }
-  }
+    /*Play what is in the buffer */
+    play_buffer(BUFF_LEN_DIV2, BUFF_LEN_DIV4);
 }
 
 /**
@@ -555,6 +505,43 @@ static void Error_Handler(void)
   }
 }
 
+
+//---------------------------Compute What is in the audiobuff---------------------------------
+void play_buffer (uint16_t offset, uint16_t len)
+{
+	uint16_t	*outp;
+	uint16_t	value;
+	//uint16_t	n;
+
+	outp    = audiobuff + offset;
+
+
+			sawWave += NOTEFREQUENCY;
+			if (sawWave > 1.0)
+				sawWave -= 2.0;
+
+			filteredSaw = updateFilter(&filt, sawWave);
+
+			sample = (int16_t)(500 * filteredSaw);
+
+
+			sawWave2 += NOTEFREQUENCY2;
+			if (sawWave2 > 1.0)
+				sawWave2 -= 2.0;
+
+			filteredSaw2 = updateFilter(&filt2, sawWave2);
+
+			sample2 = (int16_t)(500 * filteredSaw2);
+
+
+			/****** let's hear the new sample *******/
+			value = (uint16_t)(sample);
+			*outp++ = value; // left channel sample
+			value = (uint16_t)(sample2);
+			*outp++ = value; // right channel sample
+
+}
+
 #ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
@@ -575,12 +562,4 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif
 
-/**
-  * @}
-  */
 
-/**
-  * @}
-  */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
