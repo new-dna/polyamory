@@ -30,7 +30,7 @@
 		<link>
 			<name>synth-lib</name>
 			<type>2</type>
-			<locationURI>PARENT-1-PARENT_LOC/synth-lib</locationURI>
+			<locationURI>WORKSPACE_LOC/synth-lib</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
